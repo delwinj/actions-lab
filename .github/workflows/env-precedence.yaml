@@ -1,0 +1,27 @@
+name: env-precedence
+on: workflow_dispatch
+permissions: {}
+defaults:
+  run:
+    shell: bash
+env:
+  LEVEL: workflow
+  ONLY_WF: from-workflow
+jobs:
+  show:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      LEVEL: job
+    steps:
+      - name: A
+        run: echo "LEVEL=$LEVEL ONLY_WF=$ONLY_WF"
+      - name: B
+        env:
+          LEVEL: step
+        run: |
+          echo "shell: LEVEL=$LEVEL"
+          echo "expr: LEVEL=${{ env.LEVEL }}"
+          export LEVEL=exported
+      - name: C
+        run: echo "LEVEL=$LEVEL"
